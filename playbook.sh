@@ -9,7 +9,7 @@
 #% DESCRIPTION
 #%    This is a script for the automated installation, upgrade,
 #%    and uninstall of the dockerized Pen Aviation comm switching
-#%    software on a Ubuntu ARM Linux distro.
+#%    software on a Ubuntu / Debian ARM Linux distro.
 #%
 #% OPTIONS
 #%    -h, --help                    Print this help
@@ -309,9 +309,9 @@ if ! command -v lsb_release &> /dev/null; then
     exit 1
 fi
 
-# Check if the Linux distribution is Ubuntu
-if [ "$(lsb_release -si)" != "Ubuntu" ]; then
-    echo "This script is intended for Ubuntu only. Exiting."
+# Check if the Linux distribution is Ubuntu or Debian
+if [ "$(lsb_release -si)" != "Ubuntu" && "$(lsb_release -si)" != "Debian"]; then
+    echo "This script is intended for Ubuntu or Debian only. Exiting."
     exit 1
 fi
 
