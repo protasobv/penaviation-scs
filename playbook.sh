@@ -218,7 +218,7 @@ installing( )
         -v /data/navrouter.conf:/navlink/navrouter.conf:rw \
         --mount type=bind,source=/data/isbd.conf,target=/mavlink-splitter/examples/isbd.conf:rw \
         --mount type=bind,source=/data/navrouter.conf,target=/navlink/navrouter.conf:rw \
-        --name=penaviation-core ${TAG_STABLE} \
+        --name=penaviation-scs ${TAG_STABLE} \
         bash -c "./mavlink-splitter/build/src/mavlink-routerd -c mavlink-splitter/examples/isbd.conf & sleep 5 && python3 ./navlink/navlink.py"
 
     echo -e "[INFO] ${CYAN}Software instalation and execution process completed.${NC}\t\t$(date)"
@@ -231,7 +231,7 @@ updating( )
 
     # Stopping any running software image containers
     echo -e "[INFO] ${CYAN}Stopping any running software image containers...${NC}"
-    sudo docker stop penaviation-core
+    sudo docker stop penaviation-scs
 
     # Pull Docker software image from repository
     echo -e "[INFO] ${CYAN}Retrieving latest Docker software image from repository...${NC}"
@@ -255,7 +255,7 @@ updating( )
         -v /data/navrouter.conf:/navlink/navrouter.conf:rw \
         --mount type=bind,source=/data/isbd.conf,target=/mavlink-splitter/examples/isbd.conf:rw \
         --mount type=bind,source=/data/navrouter.conf,target=/navlink/navrouter.conf:rw \
-        --name=penaviation-core ${TAG_LATEST} \
+        --name=penaviation-scs ${TAG_LATEST} \
         bash -c "./mavlink-splitter/build/src/mavlink-routerd -c mavlink-splitter/examples/isbd.conf & sleep 5 && python3 ./navlink/navlink.py"
 
     # Deleting Docker leftover images of the software
@@ -272,7 +272,7 @@ uninstalling( )
 
     # Stopping any running software image containers
     echo -e "[INFO] ${CYAN}Stopping any running software image containers...${NC}"
-    sudo docker stop penaviation-core
+    sudo docker stop penaviation-scs
 
     # Deleting Docker leftover images of the software
     echo -e "[INFO] ${CYAN}Deleting any leftover Docker images of the software...${NC}"
