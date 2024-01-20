@@ -216,8 +216,11 @@ installing( )
         -v /tmp/.X11-unix/:/tmp/.X11-unix \
         -v /data/isbd.conf:/mavlink-splitter/examples/isbd.conf:rw \
         -v /data/navrouter.conf:/navlink/navrouter.conf:rw \
+        -v /data/navrouter.log:/navlink/navrouter.log:rw \
+        -v /data:/data \
         --mount type=bind,source=/data/isbd.conf,target=/mavlink-splitter/examples/isbd.conf:rw \
         --mount type=bind,source=/data/navrouter.conf,target=/navlink/navrouter.conf:rw \
+        --mount type=bind,source=/data/navrouter.log,target=/navlink/navrouter.log:rw \
         --name=penaviation-scs ${TAG_STABLE} \
         bash -c "./mavlink-splitter/build/src/mavlink-routerd -c mavlink-splitter/examples/isbd.conf & sleep 5 && python3 ./navlink/navlink.py"
 
@@ -253,8 +256,11 @@ updating( )
         -v /tmp/.X11-unix/:/tmp/.X11-unix \
         -v /data/isbd.conf:/mavlink-splitter/examples/isbd.conf:rw \
         -v /data/navrouter.conf:/navlink/navrouter.conf:rw \
+        -v /data/navrouter.log:/navlink/navrouter.log:rw \
+        -v /data:/data \
         --mount type=bind,source=/data/isbd.conf,target=/mavlink-splitter/examples/isbd.conf:rw \
         --mount type=bind,source=/data/navrouter.conf,target=/navlink/navrouter.conf:rw \
+        --mount type=bind,source=/data/navrouter.log,target=/navlink/navrouter.log:rw \
         --name=penaviation-scs ${TAG_LATEST} \
         bash -c "./mavlink-splitter/build/src/mavlink-routerd -c mavlink-splitter/examples/isbd.conf & sleep 5 && python3 ./navlink/navlink.py"
 
