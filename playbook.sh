@@ -176,6 +176,7 @@ installing( )
 
     # Install and make the required configuration files and directories
     sudo mkdir -p /data
+    sudo touch /data/navrouter.log
 
     sudo curl -o /data/isbd.conf ${CONF_ISBD}
     if [ $? -eq 0 ]; then
