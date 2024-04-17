@@ -33,6 +33,7 @@
 #================================================================
 #  HISTORY
 #     2024-01-05 : Script creation
+#     2024-04-17 : Updating stable version tag
 #
 #================================================================
 #  DEBUG OPTION
@@ -45,7 +46,7 @@
 
 ########## Global Variables ##########
 
-TAG_STABLE="protasobv/penaviation-scs:0.6.2"
+TAG_STABLE="protasobv/penaviation-scs:0.7.2"
 TAG_LATEST="protasobv/penaviation-scs:latest"
 CONF_ISBD="https://raw.githubusercontent.com/protasobv/penaviation-scs/main/isbd.conf"
 CONF_NAVROUTER="https://raw.githubusercontent.com/protasobv/penaviation-scs/main/navrouter.conf"
