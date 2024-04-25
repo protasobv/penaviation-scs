@@ -46,7 +46,7 @@
 
 ########## Global Variables ##########
 
-TAG_STABLE="protasobv/penaviation-scs:0.7.2"
+TAG_STABLE="protasobv/penaviation-scs:0.7.1"
 TAG_LATEST="protasobv/penaviation-scs:latest"
 CONF_ISBD="https://raw.githubusercontent.com/protasobv/penaviation-scs/main/isbd.conf"
 CONF_NAVROUTER="https://raw.githubusercontent.com/protasobv/penaviation-scs/main/navrouter.conf"
