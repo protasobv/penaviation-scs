@@ -34,6 +34,7 @@
 #  HISTORY
 #     2024-01-05 : Script creation
 #     2024-04-17 : Updating stable version tag
+#     2025-02-11 : Adding start and stop service functionality
 #
 #================================================================
 #  DEBUG OPTION
@@ -46,7 +47,7 @@
 
 ########## Global Variables ##########
 
-TAG_STABLE="protasobv/penaviation-scs:0.7.1"
+TAG_STABLE="protasobv/penaviation-scs:0.7.2"
 TAG_LATEST="protasobv/penaviation-scs:latest"
 CONF_ISBD="https://raw.githubusercontent.com/protasobv/penaviation-scs/main/isbd.conf"
 CONF_NAVROUTER="https://raw.githubusercontent.com/protasobv/penaviation-scs/main/navrouter.conf"
@@ -55,7 +56,7 @@ CONF_NAVROUTER="https://raw.githubusercontent.com/protasobv/penaviation-scs/main
 
 SCRIPT_HEADSIZE=$(head -200 ${0} |grep -n "^# END_OF_HEADER" | cut -f1 -d:)
 SCRIPT_NAME="$(basename ${0})"
-SCRIPT_VERSION="1.0.0"
+SCRIPT_VERSION="1.0.1"
 
 usage( )
 {
@@ -102,6 +103,8 @@ menu( )
         echo -e "  1. Install and run software"
         echo -e "  2. Update software"
         echo -e "  3. Uninstall software"
+        echo -e "  4. Run software"
+        echo -e "  5. Stop software"
         echo -e " "
         echo -e "  0. Exit"
         echo -e " "
@@ -131,6 +134,12 @@ menu( )
             return ${?}
         elif [ ${option} -eq 3 ]; then
             uninstalling
+            return ${?}
+        elif [ ${option} -eq 4 ]; then
+            starting
+            return ${?}
+        elif [ ${option} -eq 5 ]; then
+            stopping
             return ${?}
         else
             echo -e "${RED}Invalid option. Please try again...${NC}"
@@ -198,31 +207,33 @@ installing( )
     fi
 
     # Iridium SBD
-    sudo chmod +666 /dev/ttyUSB0
+    sudo chmod +666 /dev/ttyUSB0 2>/dev/null
+    sudo chmod +666 /dev/ttyUSB1 2>/dev/null
 
     # AutoPilot connected via USB
-    sudo chmod +666 /dev/ttyACM0
+    sudo chmod +666 /dev/ttyACM0 2>/dev/null
+    sudo chmod +666 /dev/ttyACM1 2>/dev/null
 
     # AutoPilot connected via serial line
-    sudo chmod +666 /dev/ttyS0
+    sudo chmod +666 /dev/ttyS0 2>/dev/null
 
     echo -e "[INFO] ${CYAN}Software installation proccess completed successfully.${NC}\t\t$(date)"
 
     echo -e "[INFO] ${CYAN}Run the software image container via Docker...${NC}\t\t\t$(date)"
-    sudo docker run -d --rm --privileged \
+    sudo docker run -d --privileged \
+        --restart unless-stopped \
         -p 5770:5770/tcp -p 14500:14500/udp -p 14600:14600/udp \
         -e DISPLAY=${DISPLAY} \
         --device=/dev/ttyUSB0:/dev/ttyUSB0 \
+        --device=/dev/ttyUSB1:/dev/ttyUSB1 \
         --device=/dev/ttyACM0:/dev/ttyACM0 \
+        --device=/dev/ttyACM1:/dev/ttyACM1 \
         -v ${HOME}/.Xauthority:/root/.Xauthority:rw \
         -v /tmp/.X11-unix/:/tmp/.X11-unix \
         -v /data/isbd.conf:/mavlink-splitter/examples/isbd.conf:rw \
         -v /data/navrouter.conf:/navlink/navrouter.conf:rw \
         -v /data/navrouter.log:/navlink/navrouter.log:rw \
         -v /data:/data \
-        --mount type=bind,source=/data/isbd.conf,target=/mavlink-splitter/examples/isbd.conf:rw \
-        --mount type=bind,source=/data/navrouter.conf,target=/navlink/navrouter.conf:rw \
-        --mount type=bind,source=/data/navrouter.log,target=/navlink/navrouter.log:rw \
         --name=penaviation-scs ${TAG_STABLE} \
         bash -c "./mavlink-splitter/build/src/mavlink-routerd -c mavlink-splitter/examples/isbd.conf & sleep 5 && python3 ./navlink/navlink.py"
 
@@ -233,6 +244,18 @@ installing( )
 updating( )
 {
     echo -e "${CYAN}Software update proccess started...${NC}\t\t\t$(date)"
+
+    # Updating devices permissions
+    # Iridium SBD
+    sudo chmod +666 /dev/ttyUSB0 2>/dev/null
+    sudo chmod +666 /dev/ttyUSB1 2>/dev/null
+
+    # AutoPilot connected via USB
+    sudo chmod +666 /dev/ttyACM0 2>/dev/null
+    sudo chmod +666 /dev/ttyACM1 2>/dev/null
+
+    # AutoPilot connected via serial line
+    sudo chmod +666 /dev/ttyS0 2>/dev/null
 
     # Stopping any running software image containers
     echo -e "[INFO] ${CYAN}Stopping any running software image containers...${NC}"
@@ -249,20 +272,20 @@ updating( )
     fi
 
     echo -e "[INFO] ${CYAN}Run the software image container via Docker...${NC}\t\t\t$(date)"
-    sudo docker run -d --rm --privileged \
+    sudo docker run -d --privileged \
+        --restart unless-stopped \
         -p 5770:5770/tcp -p 14500:14500/udp -p 14600:14600/udp \
         -e DISPLAY=${DISPLAY} \
         --device=/dev/ttyUSB0:/dev/ttyUSB0 \
+        --device=/dev/ttyUSB1:/dev/ttyUSB1 \
         --device=/dev/ttyACM0:/dev/ttyACM0 \
+        --device=/dev/ttyACM1:/dev/ttyACM1 \
         -v ${HOME}/.Xauthority:/root/.Xauthority:rw \
         -v /tmp/.X11-unix/:/tmp/.X11-unix \
         -v /data/isbd.conf:/mavlink-splitter/examples/isbd.conf:rw \
         -v /data/navrouter.conf:/navlink/navrouter.conf:rw \
         -v /data/navrouter.log:/navlink/navrouter.log:rw \
         -v /data:/data \
-        --mount type=bind,source=/data/isbd.conf,target=/mavlink-splitter/examples/isbd.conf:rw \
-        --mount type=bind,source=/data/navrouter.conf,target=/navlink/navrouter.conf:rw \
-        --mount type=bind,source=/data/navrouter.log,target=/navlink/navrouter.log:rw \
         --name=penaviation-scs ${TAG_LATEST} \
         bash -c "./mavlink-splitter/build/src/mavlink-routerd -c mavlink-splitter/examples/isbd.conf & sleep 5 && python3 ./navlink/navlink.py"
 
@@ -292,6 +315,58 @@ uninstalling( )
     sudo rm -rf /data
 
     echo -e "${CYAN}Software removal proccess completed successfully.${NC}\t$(date)"
+    return 0
+}
+
+starting( )
+{
+    echo -e "[INFO] ${CYAN}Run the software image container via Docker...${NC}\t\t\t$(date)"
+
+    # Iridium SBD
+    sudo chmod +666 /dev/ttyUSB0 2>/dev/null
+    sudo chmod +666 /dev/ttyUSB1 2>/dev/null
+
+    # AutoPilot connected via USB
+    sudo chmod +666 /dev/ttyACM0 2>/dev/null
+    sudo chmod +666 /dev/ttyACM1 2>/dev/null
+
+    # AutoPilot connected via serial line
+    sudo chmod +666 /dev/ttyS0 2>/dev/null
+
+    # Starting any running software image containers
+    echo -e "[INFO] ${CYAN}Starting any running software image containers...${NC}"
+    
+    sudo docker rm -f penaviation-scs 2>/dev/null
+    sudo docker run -d --privileged \
+        --restart unless-stopped \
+        -p 5770:5770/tcp -p 14500:14500/udp -p 14600:14600/udp \
+        -e DISPLAY=${DISPLAY} \
+        --device=/dev/ttyUSB0:/dev/ttyUSB0 \
+        --device=/dev/ttyUSB1:/dev/ttyUSB1 \
+        --device=/dev/ttyACM0:/dev/ttyACM0 \
+        --device=/dev/ttyACM1:/dev/ttyACM1 \
+        -v ${HOME}/.Xauthority:/root/.Xauthority:rw \
+        -v /tmp/.X11-unix/:/tmp/.X11-unix \
+        -v /data/isbd.conf:/mavlink-splitter/examples/isbd.conf:rw \
+        -v /data/navrouter.conf:/navlink/navrouter.conf:rw \
+        -v /data/navrouter.log:/navlink/navrouter.log:rw \
+        -v /data:/data \
+        --name=penaviation-scs ${TAG_STABLE} \
+        bash -c "./mavlink-splitter/build/src/mavlink-routerd -c mavlink-splitter/examples/isbd.conf & sleep 5 && python3 ./navlink/navlink.py"
+
+    echo -e "[INFO] ${CYAN}Software execution process completed.${NC}\t\t$(date)"
+}
+
+stopping( )
+{
+    echo -e "${CYAN}Software stopping proccess started...${NC}\t\t\t$(date)"
+
+    # Stopping any running software image containers
+    echo -e "[INFO] ${CYAN}Stopping any running software image containers...${NC}"
+    sudo docker stop penaviation-scs
+    sudo docker rm -f penaviation-scs
+
+    echo -e "${CYAN}Software stopping proccess completed successfully.${NC}\t$(date)"
     return 0
 }
 
