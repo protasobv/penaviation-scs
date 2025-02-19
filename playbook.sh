@@ -36,6 +36,7 @@
 #     2024-04-17 : Updating stable version tag
 #     2025-02-11 : Adding start and stop service functionality
 #     2025-02-18 : Updating stable version tag
+#     2025-02-19 : Updating stable version tag
 #
 #================================================================
 #  DEBUG OPTION
@@ -48,7 +49,7 @@
 
 ########## Global Variables ##########
 
-TAG_STABLE="protasobv/penaviation-scs:0.7.3"
+TAG_STABLE="protasobv/penaviation-scs:0.7.4"
 TAG_LATEST="protasobv/penaviation-scs:latest"
 CONF_ISBD="https://raw.githubusercontent.com/protasobv/penaviation-scs/main/isbd.conf"
 CONF_NAVROUTER="https://raw.githubusercontent.com/protasobv/penaviation-scs/main/navrouter.conf"
